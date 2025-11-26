@@ -16,9 +16,12 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration - configurable via CORS_ORIGIN env variable
+// For production, set CORS_ORIGIN to specific domains (comma-separated)
+// For development/testing, defaults to '*' to allow all origins
+const corsOrigin = process.env.CORS_ORIGIN || '*';
 app.use(cors({
-  origin: '*',
+  origin: corsOrigin === '*' ? '*' : corsOrigin.split(',').map(o => o.trim()),
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

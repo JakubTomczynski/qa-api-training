@@ -2,6 +2,8 @@ const Database = require('better-sqlite3');
 const path = require('path');
 
 // Use in-memory database for production (cloud deployment) or file-based for development
+// Note: In-memory is intentional for this QA training API - data resets on restart,
+// which is acceptable for a practice/learning environment and simplifies deployment
 const isProduction = process.env.NODE_ENV === 'production';
 const dbPath = isProduction ? ':memory:' : path.join(__dirname, '..', '..', 'database.sqlite');
 const db = new Database(dbPath);

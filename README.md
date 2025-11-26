@@ -1,238 +1,234 @@
-# QA API Training - Project Management System
+# 🧪 QA API Training - Project Management System
 
-🧪 A complete REST API for QA Training - Project Management System with Postman Collection
+A live REST API for practicing API testing skills with Postman or Insomnia.
 
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org/)
-[![Express.js](https://img.shields.io/badge/Express.js-5.x-blue.svg)](https://expressjs.com/)
-[![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
+## 🌐 Live API URL
 
-## 📋 Overview
+**Base URL**: `https://qa-api-training.onrender.com`
 
-This project provides a fully functional REST API application designed for QA testers to practice API testing with Postman/Insomnia. It simulates a Project Management System with complete CRUD operations, JWT authentication, and proper error handling.
+(No installation needed - the API is already running!)
 
-## ✨ Features
+> **Note**: The free tier on Render may spin down after 15 minutes of inactivity. The first request may take 30-60 seconds while the server wakes up.
 
-- **RESTful API** with proper HTTP status codes
-- **JWT Authentication** for secure endpoints
-- **SQLite Database** for data persistence
-- **Comprehensive Validation** on all inputs
-- **Rate Limiting** for API abuse testing
-- **CORS Support** for browser-based testing
-- **Request Logging** for debugging
-- **Health Check Endpoint** for monitoring
-- **API Versioning** (supports both `/api/` and `/api/v1/`)
-- **Complete Postman Collection** with automated tests
+---
 
-## 🛠️ Tech Stack
+## 📚 Your Mission
 
-- **Runtime**: Node.js (18+)
-- **Framework**: Express.js 5.x
-- **Database**: SQLite (better-sqlite3)
-- **Authentication**: JWT (jsonwebtoken)
-- **Password Hashing**: bcryptjs
-- **Validation**: express-validator
-- **Security**: helmet, cors
-- **Logging**: morgan
-- **Rate Limiting**: express-rate-limit
+As a QA Tester, your task is to:
+1. Set up Postman from scratch
+2. Create requests for all endpoints
+3. Write test assertions
+4. Test both happy paths and edge cases
 
-## 📦 Prerequisites
+**This is a hands-on learning experience** - build your own collection step by step!
 
-- [Node.js](https://nodejs.org/) (version 18 or higher)
-- [npm](https://www.npmjs.com/) (comes with Node.js)
-- [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/) (for API testing)
+---
 
-## 🚀 Installation
+## 🔐 Authentication
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/JakubTomczynski/qa-api-training.git
-   cd qa-api-training
-   ```
+This API uses JWT (JSON Web Tokens). Here's how it works:
+1. Register a user account
+2. Login to get a token
+3. Use the token in the `Authorization` header for protected endpoints
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+The token format is: `Bearer <your-token>`
 
-3. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` file if needed (defaults work fine for development):
-   ```env
-   PORT=3000
-   NODE_ENV=development
-   JWT_SECRET=your-super-secret-jwt-key-change-in-production
-   JWT_EXPIRES_IN=24h
-   RATE_LIMIT_WINDOW_MS=900000
-   RATE_LIMIT_MAX_REQUESTS=100
-   ```
+---
 
-4. **Start the server**
-   ```bash
-   # Production mode
-   npm start
-   
-   # Development mode (with hot reload)
-   npm run dev
-   ```
-
-5. **Verify the server is running**
-   
-   Open your browser or use curl:
-   ```bash
-   curl http://localhost:3000/api/health
-   ```
-   
-   Expected response:
-   ```json
-   {
-     "status": "OK",
-     "timestamp": "2024-01-01T12:00:00.000Z",
-     "uptime": 10.5
-   }
-   ```
-
-## 📚 API Documentation
-
-### Base URL
-```
-http://localhost:3000/api
-```
+## 📋 API Endpoints
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/auth/register` | Register a new user | No |
-| POST | `/api/auth/login` | Login and get JWT token | No |
+#### POST /api/auth/register
+Creates a new user account.
 
-#### Register User
-```bash
-POST /api/auth/register
-Content-Type: application/json
-
+**Request:**
+- URL: `{{baseUrl}}/api/auth/register`
+- Method: `POST`
+- Headers: `Content-Type: application/json`
+- Body:
+```json
 {
-  "email": "user@example.com",
-  "password": "password123",
-  "role": "user"  // optional: "user" or "admin"
+  "email": "tester@example.com",
+  "password": "password123"
 }
 ```
 
-**Response (201 Created):**
+**Optional Fields:**
+- `role`: Can be `"user"` (default) or `"admin"`
+
+**Success Response (201 Created):**
 ```json
 {
   "message": "User registered successfully",
   "user": {
     "id": 1,
-    "email": "user@example.com",
+    "email": "tester@example.com",
     "role": "user",
-    "createdAt": "2024-01-01 12:00:00"
+    "createdAt": "2025-01-01 12:00:00"
   }
 }
 ```
 
-#### Login
-```bash
-POST /api/auth/login
-Content-Type: application/json
+**Error Responses:**
+- `400 Bad Request` - Invalid email format
+- `400 Bad Request` - Password too short (minimum 8 characters)
+- `400 Bad Request` - Email already exists
 
+---
+
+#### POST /api/auth/login
+Authenticates a user and returns a JWT token.
+
+**Request:**
+- URL: `{{baseUrl}}/api/auth/login`
+- Method: `POST`
+- Headers: `Content-Type: application/json`
+- Body:
+```json
 {
-  "email": "user@example.com",
+  "email": "tester@example.com",
   "password": "password123"
 }
 ```
 
-**Response (200 OK):**
+**Success Response (200 OK):**
 ```json
 {
   "message": "Login successful",
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "user": {
     "id": 1,
-    "email": "user@example.com",
+    "email": "tester@example.com",
     "role": "user"
   }
 }
 ```
 
-### Project Endpoints
+**Error Responses:**
+- `400 Bad Request` - Missing email or password
+- `401 Unauthorized` - Invalid credentials
 
-All project endpoints require JWT authentication via the `Authorization` header:
+---
+
+### Project Endpoints (Protected)
+
+All project endpoints require authentication. Include the JWT token in the Authorization header:
 ```
-Authorization: Bearer <your-jwt-token>
+Authorization: Bearer <your-token>
 ```
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/projects` | Create a new project | Yes |
-| GET | `/api/projects` | Get all projects | Yes |
-| GET | `/api/projects/:id` | Get project by ID | Yes |
-| PUT | `/api/projects/:id` | Update a project | Yes (owner/admin) |
-| DELETE | `/api/projects/:id` | Delete a project | Yes (owner/admin) |
+---
 
-#### Create Project
-```bash
-POST /api/projects
-Authorization: Bearer <token>
-Content-Type: application/json
+#### POST /api/projects
+Creates a new project.
 
+**Request:**
+- URL: `{{baseUrl}}/api/projects`
+- Method: `POST`
+- Headers: 
+  - `Content-Type: application/json`
+  - `Authorization: Bearer {{authToken}}`
+- Body:
+```json
 {
-  "name": "My Project",
-  "description": "Project description",
-  "status": "active"  // optional: "active", "completed", or "on-hold"
+  "name": "My Test Project",
+  "description": "A project for testing purposes"
 }
 ```
 
-**Response (201 Created):**
+**Optional Fields:**
+- `status`: Can be `"active"` (default), `"completed"`, or `"on-hold"`
+
+**Success Response (201 Created):**
 ```json
 {
   "id": 1,
-  "name": "My Project",
-  "description": "Project description",
+  "name": "My Test Project",
+  "description": "A project for testing purposes",
   "status": "active",
   "createdBy": 1,
-  "createdAt": "2024-01-01 12:00:00",
-  "updatedAt": "2024-01-01 12:00:00",
-  "creatorEmail": "user@example.com"
+  "createdAt": "2025-01-01 12:00:00",
+  "updatedAt": "2025-01-01 12:00:00",
+  "creatorEmail": "tester@example.com"
 }
 ```
 
-#### Get All Projects
-```bash
-GET /api/projects
-Authorization: Bearer <token>
-```
+**Error Responses:**
+- `400 Bad Request` - Missing name or description
+- `400 Bad Request` - Invalid status value
+- `401 Unauthorized` - Missing or invalid token
 
-**Response (200 OK):**
+---
+
+#### GET /api/projects
+Returns all projects.
+
+**Request:**
+- URL: `{{baseUrl}}/api/projects`
+- Method: `GET`
+- Headers: `Authorization: Bearer {{authToken}}`
+
+**Success Response (200 OK):**
 ```json
 [
   {
     "id": 1,
-    "name": "My Project",
-    "description": "Project description",
+    "name": "My Test Project",
+    "description": "A project for testing purposes",
     "status": "active",
     "createdBy": 1,
-    "createdAt": "2024-01-01 12:00:00",
-    "updatedAt": "2024-01-01 12:00:00",
-    "creatorEmail": "user@example.com"
+    "createdAt": "2025-01-01 12:00:00",
+    "updatedAt": "2025-01-01 12:00:00",
+    "creatorEmail": "tester@example.com"
   }
 ]
 ```
 
-#### Get Project by ID
-```bash
-GET /api/projects/1
-Authorization: Bearer <token>
+**Error Responses:**
+- `401 Unauthorized` - Missing or invalid token
+
+---
+
+#### GET /api/projects/:id
+Returns a single project by ID.
+
+**Request:**
+- URL: `{{baseUrl}}/api/projects/1`
+- Method: `GET`
+- Headers: `Authorization: Bearer {{authToken}}`
+
+**Success Response (200 OK):**
+```json
+{
+  "id": 1,
+  "name": "My Test Project",
+  "description": "A project for testing purposes",
+  "status": "active",
+  "createdBy": 1,
+  "createdAt": "2025-01-01 12:00:00",
+  "updatedAt": "2025-01-01 12:00:00",
+  "creatorEmail": "tester@example.com"
+}
 ```
 
-#### Update Project
-```bash
-PUT /api/projects/1
-Authorization: Bearer <token>
-Content-Type: application/json
+**Error Responses:**
+- `401 Unauthorized` - Missing or invalid token
+- `404 Not Found` - Project doesn't exist
 
+---
+
+#### PUT /api/projects/:id
+Updates an existing project. Only the owner or admin can update.
+
+**Request:**
+- URL: `{{baseUrl}}/api/projects/1`
+- Method: `PUT`
+- Headers:
+  - `Content-Type: application/json`
+  - `Authorization: Bearer {{authToken}}`
+- Body:
+```json
 {
   "name": "Updated Project Name",
   "description": "Updated description",
@@ -240,221 +236,366 @@ Content-Type: application/json
 }
 ```
 
-#### Delete Project
-```bash
-DELETE /api/projects/1
-Authorization: Bearer <token>
+**Success Response (200 OK):**
+```json
+{
+  "id": 1,
+  "name": "Updated Project Name",
+  "description": "Updated description",
+  "status": "completed",
+  "createdBy": 1,
+  "createdAt": "2025-01-01 12:00:00",
+  "updatedAt": "2025-01-01 12:30:00",
+  "creatorEmail": "tester@example.com"
+}
 ```
 
-**Response (204 No Content)**
+**Error Responses:**
+- `400 Bad Request` - Invalid status value
+- `401 Unauthorized` - Missing or invalid token
+- `403 Forbidden` - Not the owner and not admin
+- `404 Not Found` - Project doesn't exist
 
-### Health Check Endpoint
+---
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/health` | Health check | No |
+#### DELETE /api/projects/:id
+Deletes a project. Only the owner or admin can delete.
 
-### HTTP Status Codes
+**Request:**
+- URL: `{{baseUrl}}/api/projects/1`
+- Method: `DELETE`
+- Headers: `Authorization: Bearer {{authToken}}`
 
-| Code | Status | Description |
-|------|--------|-------------|
-| 200 | OK | Successful GET/PUT request |
-| 201 | Created | Successful POST request |
-| 204 | No Content | Successful DELETE request |
-| 400 | Bad Request | Validation errors |
-| 401 | Unauthorized | Missing/invalid token |
-| 403 | Forbidden | User not authorized for action |
-| 404 | Not Found | Resource not found |
-| 429 | Too Many Requests | Rate limit exceeded |
-| 500 | Internal Server Error | Server error |
+**Success Response (204 No Content):**
+No response body.
 
-## 📮 Importing Postman Collection
+**Error Responses:**
+- `401 Unauthorized` - Missing or invalid token
+- `403 Forbidden` - Not the owner and not admin
+- `404 Not Found` - Project doesn't exist
 
-### Step 1: Open Postman
-Launch the Postman application on your computer.
+---
 
-### Step 2: Import the Collection
-1. Click the **Import** button in the top-left corner
-2. Select the **File** tab
-3. Navigate to `postman/ProjectManagementAPI.postman_collection.json`
-4. Click **Import**
+### Utility Endpoints
 
-### Step 3: Collection Structure
-After importing, you'll see the following structure:
+#### GET /api/health
+Health check endpoint (no authentication required).
 
-```
-📁 Project Management API
-├── 📁 1. Authentication
-│   ├── Register User
-│   ├── Register User (Duplicate Email - 400)
-│   ├── Register User (Invalid Email - 400)
-│   ├── Register User (Short Password - 400)
-│   ├── Login
-│   ├── Login (Invalid Credentials - 401)
-│   └── Login (Non-existent User - 401)
-├── 📁 2. Projects CRUD
-│   ├── Create Project
-│   ├── Create Project (Missing Fields - 400)
-│   ├── Create Project (No Auth - 401)
-│   ├── Create Project (Invalid Status - 400)
-│   ├── Get All Projects
-│   ├── Get Project by ID
-│   ├── Get Project (Not Found - 404)
-│   ├── Update Project
-│   ├── Update Project (Not Found - 404)
-│   ├── Delete Project
-│   └── Delete Project (Not Found - 404)
-├── 📁 3. Health & Info
-│   ├── Health Check
-│   └── API Info
-└── 📁 4. Authorization Tests
-    ├── Register Admin User
-    ├── Register Second User
-    ├── Login Second User
-    ├── Create Project (First User)
-    ├── Update Project (Forbidden - 403)
-    └── Delete Project (Forbidden - 403)
+**Request:**
+- URL: `{{baseUrl}}/api/health`
+- Method: `GET`
+
+**Success Response (200 OK):**
+```json
+{
+  "status": "OK",
+  "timestamp": "2025-01-01T12:00:00.000Z",
+  "uptime": 1234.567
+}
 ```
 
-### Step 4: Configure Collection Variables
-The collection uses variables for dynamic values. Default values are pre-configured:
+---
 
-| Variable | Default Value | Description |
-|----------|---------------|-------------|
-| `baseUrl` | `http://localhost:3000` | API base URL |
-| `authToken` | (auto-populated) | JWT token saved after login |
-| `testEmail` | (auto-generated) | Test user email |
-| `testPassword` | `password123` | Test user password |
-| `projectId` | (auto-populated) | Created project ID |
+#### GET /
+API info endpoint (no authentication required).
 
-To modify these:
-1. Click on the collection name
-2. Go to the **Variables** tab
-3. Update the values as needed
+**Request:**
+- URL: `{{baseUrl}}/`
+- Method: `GET`
 
-### Step 5: Run the Collection
-1. Make sure the API server is running (`npm start`)
-2. Click **Run** on the collection
-3. Select the requests you want to run
-4. Click **Run Project Management API**
+**Success Response (200 OK):**
+```json
+{
+  "name": "Project Management API",
+  "version": "1.0.0",
+  "description": "REST API for QA Training - Project Management System",
+  "documentation": "/api/health",
+  "endpoints": {
+    "auth": {
+      "register": "POST /api/auth/register",
+      "login": "POST /api/auth/login"
+    },
+    "projects": {
+      "create": "POST /api/projects",
+      "getAll": "GET /api/projects",
+      "getById": "GET /api/projects/:id",
+      "update": "PUT /api/projects/:id",
+      "delete": "DELETE /api/projects/:id"
+    }
+  }
+}
+```
 
-## 🧪 Running Tests
+---
 
-### Using Postman Collection Runner
+## 🛠️ Postman Setup Guide (Step-by-Step)
+
+### Step 1: Create a New Collection
 1. Open Postman
-2. Click on the collection
-3. Click **Run** to open the Collection Runner
-4. Select requests to run
-5. Click **Run** to execute
+2. Click "Collections" in the sidebar
+3. Click "+" to create new collection
+4. Name it: "QA API Training"
 
-### Using Newman (CLI)
-```bash
-# Install Newman globally
-npm install -g newman
+### Step 2: Set Up Environment Variables
+1. Click the ⚙️ gear icon (top right) or go to Environments
+2. Click "Add" or "+" to create new environment
+3. Name it: "QA API Training - Live"
+4. Add these variables:
 
-# Run the collection
-newman run postman/ProjectManagementAPI.postman_collection.json
-```
+| Variable | Initial Value | Description |
+|----------|---------------|-------------|
+| `baseUrl` | `https://qa-api-training.onrender.com` | API base URL |
+| `authToken` | (leave empty) | Will store JWT token |
+| `projectId` | (leave empty) | Will store created project ID |
 
-### Manual Testing with curl
+5. Click "Save"
+6. Select this environment from the dropdown (top right)
 
-**Register a user:**
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password123"}'
-```
-
-**Login:**
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password123"}'
-```
-
-**Create a project (use the token from login):**
-```bash
-curl -X POST http://localhost:3000/api/projects \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
-  -d '{"name":"Test Project","description":"A test project"}'
-```
-
-## 📁 Project Structure
-
-```
-qa-api-training/
-├── src/
-│   ├── index.js              # Entry point
-│   ├── config/
-│   │   └── database.js       # SQLite configuration
-│   ├── middleware/
-│   │   ├── auth.js           # JWT verification middleware
-│   │   └── validation.js     # Request validation middleware
-│   ├── routes/
-│   │   ├── auth.routes.js    # Auth endpoints
-│   │   └── project.routes.js # Project CRUD endpoints
-│   ├── controllers/
-│   │   ├── auth.controller.js
-│   │   └── project.controller.js
-│   └── models/
-│       ├── user.model.js
-│       └── project.model.js
-├── postman/
-│   └── ProjectManagementAPI.postman_collection.json
-├── .env.example              # Environment variables template
-├── .gitignore
-├── package.json
-└── README.md
-```
-
-## 🔒 Data Models
-
-### User Model
-```javascript
+### Step 3: Create Your First Request (Register)
+1. Right-click your collection → "Add request"
+2. Name it: "Register User"
+3. Set method to: `POST`
+4. Enter URL: `{{baseUrl}}/api/auth/register`
+5. Go to "Headers" tab → Add:
+   - Key: `Content-Type`
+   - Value: `application/json`
+6. Go to "Body" tab → select "raw" → select "JSON"
+7. Enter:
+```json
 {
-  id: number,           // Auto-generated primary key
-  email: string,        // Unique, valid email format
-  password: string,     // Hashed, min 8 characters
-  role: string,         // 'user' or 'admin'
-  createdAt: timestamp  // Auto-generated
+  "email": "tester@example.com",
+  "password": "password123"
+}
+```
+8. Click "Send"
+
+### Step 4: Create Login Request with Auto-Token Save
+1. Create new request named "Login"
+2. Configure as `POST` to `{{baseUrl}}/api/auth/login`
+3. Set Headers and Body like the Register request
+4. Go to "Tests" tab and add this script:
+
+```javascript
+// Auto-save token to environment
+if (pm.response.code === 200) {
+    const response = pm.response.json();
+    pm.environment.set("authToken", response.token);
+    console.log("✅ Token saved to authToken variable!");
 }
 ```
 
-### Project Model
+5. Click "Send" - the token will be automatically saved!
+
+### Step 5: Create Protected Requests
+For all `/api/projects` endpoints:
+1. Create new request (e.g., "Create Project")
+2. Go to "Authorization" tab
+3. Select Type: "Bearer Token"
+4. Enter Token: `{{authToken}}`
+5. Configure the rest of the request (URL, Body, etc.)
+
+### Step 6: Auto-Save Project ID
+For the "Create Project" request, add this to the Tests tab:
+
 ```javascript
-{
-  id: number,           // Auto-generated primary key
-  name: string,         // Required, min 1 character
-  description: string,  // Required
-  status: string,       // 'active', 'completed', or 'on-hold'
-  createdBy: number,    // User ID (foreign key)
-  createdAt: timestamp, // Auto-generated
-  updatedAt: timestamp  // Auto-updated
+// Auto-save project ID for later use
+if (pm.response.code === 201) {
+    const response = pm.response.json();
+    pm.environment.set("projectId", response.id);
+    console.log("✅ Project ID saved: " + response.id);
 }
 ```
 
-## 🔧 Configuration
+Now you can use `{{projectId}}` in other requests like:
+- `{{baseUrl}}/api/projects/{{projectId}}`
 
-### Environment Variables
+---
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `3000` | Server port |
-| `NODE_ENV` | `development` | Environment (development/production) |
-| `JWT_SECRET` | (required) | Secret key for JWT signing |
-| `JWT_EXPIRES_IN` | `24h` | JWT expiration time |
-| `RATE_LIMIT_WINDOW_MS` | `900000` | Rate limit window (15 min) |
-| `RATE_LIMIT_MAX_REQUESTS` | `100` | Max requests per window |
+## ✅ Test Assertions to Implement
 
-## 🛡️ Security Features
+Add these to the "Tests" tab in your Postman requests.
 
-- **JWT Authentication** - Secure token-based authentication
-- **Password Hashing** - bcryptjs with salt rounds
-- **Helmet** - HTTP headers security
-- **Rate Limiting** - Prevent API abuse
-- **Input Validation** - express-validator for request validation
-- **CORS** - Configurable cross-origin resource sharing
+### Basic Assertions
+
+**Check Status Code:**
+```javascript
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+```
+
+**Check Response Structure:**
+```javascript
+pm.test("Response has required fields", function () {
+    const json = pm.response.json();
+    pm.expect(json).to.have.property('id');
+    pm.expect(json).to.have.property('name');
+});
+```
+
+**Check Response Time:**
+```javascript
+pm.test("Response time is under 500ms", function () {
+    pm.expect(pm.response.responseTime).to.be.below(500);
+});
+```
+
+### Intermediate Assertions
+
+**Check Data Types:**
+```javascript
+pm.test("ID is a number", function () {
+    const json = pm.response.json();
+    pm.expect(json.id).to.be.a('number');
+});
+```
+
+**Check Array Length:**
+```javascript
+pm.test("Response is an array with items", function () {
+    const json = pm.response.json();
+    pm.expect(json).to.be.an('array');
+    pm.expect(json.length).to.be.greaterThan(0);
+});
+```
+
+**Check Specific Value:**
+```javascript
+pm.test("Status is active", function () {
+    const json = pm.response.json();
+    pm.expect(json.status).to.equal('active');
+});
+```
+
+### Error Response Assertions
+
+**Check Error Message:**
+```javascript
+pm.test("Error message is present", function () {
+    const json = pm.response.json();
+    pm.expect(json).to.have.property('error');
+});
+```
+
+**Check 401 Unauthorized:**
+```javascript
+pm.test("Returns 401 for missing token", function () {
+    pm.response.to.have.status(401);
+});
+```
+
+---
+
+## 🎯 Testing Challenges
+
+### Challenge 1: Happy Path Testing
+Create requests and tests for the complete flow:
+- [ ] Register a new user
+- [ ] Login and capture token automatically
+- [ ] Create a project
+- [ ] Get all projects
+- [ ] Get single project by ID
+- [ ] Update the project
+- [ ] Delete the project
+
+### Challenge 2: Negative Testing
+Test these error scenarios:
+- [ ] Register with invalid email format (expect 400)
+- [ ] Register with password less than 8 characters (expect 400)
+- [ ] Register with already existing email (expect 400)
+- [ ] Login with wrong password (expect 401)
+- [ ] Login with non-existent email (expect 401)
+- [ ] Access `/api/projects` without token (expect 401)
+- [ ] Access `/api/projects` with invalid token (expect 401)
+- [ ] Get project that doesn't exist (expect 404)
+- [ ] Update project you don't own (expect 403)
+- [ ] Delete project you don't own (expect 403)
+
+### Challenge 3: Data Validation Testing
+Test input validation:
+- [ ] Create project without name (expect 400)
+- [ ] Create project without description (expect 400)
+- [ ] Create project with invalid status value (expect 400)
+- [ ] Update project with empty name (expect 400)
+
+### Challenge 4: Advanced Testing
+- [ ] Test rate limiting (send 100+ requests quickly - expect 429)
+- [ ] Test authorization with admin role
+- [ ] Run full collection with Postman Collection Runner
+- [ ] Export and run with Newman (CLI tool)
+
+---
+
+## 📊 Expected Status Codes Reference
+
+| Scenario | Expected Code |
+|----------|---------------|
+| Successful GET | 200 OK |
+| Successful POST (create) | 201 Created |
+| Successful PUT (update) | 200 OK |
+| Successful DELETE | 204 No Content |
+| Validation error | 400 Bad Request |
+| Missing/invalid token | 401 Unauthorized |
+| Not allowed (not owner) | 403 Forbidden |
+| Resource not found | 404 Not Found |
+| Too many requests | 429 Too Many Requests |
+
+---
+
+## 💡 Tips for Testers
+
+1. **Always check the response body** - even error responses contain useful information
+2. **Use Postman Console** (View → Show Postman Console) to debug
+3. **Save your work** - Export collection regularly as backup
+4. **Use variables** - Don't hardcode IDs, save them to environment variables
+5. **Test edge cases** - Empty strings, special characters, very long inputs
+6. **Organize your collection** - Create folders for different test scenarios
+7. **Use unique emails** - Each registration needs a unique email address
+8. **Check the token expiration** - Tokens expire after 24 hours
+
+---
+
+## 🏆 Completion Checklist
+
+When you're done, you should have:
+- [ ] Postman collection with all endpoints organized in folders
+- [ ] Environment with `baseUrl`, `authToken`, and `projectId` variables
+- [ ] Auto-save scripts for token and project ID
+- [ ] Tests for all happy path scenarios
+- [ ] Tests for all error scenarios
+- [ ] All tests passing in Collection Runner
+
+---
+
+## 📖 Solution Reference
+
+After completing the challenges, you can check your work against the provided solution:
+- `postman/SOLUTION_ProjectManagementAPI.postman_collection.json`
+
+**⚠️ Important:** Try to complete all challenges yourself first before checking the solution!
+
+---
+
+## 🔧 Local Development (Optional)
+
+If you want to run the API locally for development:
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (version 18 or higher)
+- [npm](https://www.npmjs.com/)
+
+### Installation
+```bash
+git clone https://github.com/JakubTomczynski/qa-api-training.git
+cd qa-api-training
+npm install
+cp .env.example .env
+npm start
+```
+
+The API will be available at `http://localhost:3000`
+
+---
 
 ## 📝 License
 
